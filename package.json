@@ -2,6 +2,7 @@
   "name": "bvs-ai-backend",
   "version": "1.0.0",
   "description": "Backend for BVS IA Assistant",
+  "type": "commonjs",
   "main": "api/generate.js",
   "scripts": {
     "dev": "node api/generate.js"
