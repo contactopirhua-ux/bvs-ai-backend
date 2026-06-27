@@ -1,6 +1,8 @@
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+const { OpenAI } = require("openai");
 
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
 module.exports = async (req, res) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -15,7 +17,7 @@ module.exports = async (req, res) => {
   if (req.url === "/api/test") {
     return res.json({
       status: "backend working",
-      apiKey: process.env.GOOGLE_API_KEY ? "✓ set" : "✗ missing",
+      apiKey: process.env.OPENAI_API_KEY ? "✓ set" : "✗ missing",
     });
   }
 
@@ -52,22 +54,23 @@ Instrucciones:
 
 El usuario te indicará qué necesita comunicar. Genera SOLO el mensaje listo para enviar.`;
 
-      const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-
-      const result = await model.generateContent({
-        contents: [
+      const response = await openai.chat.completions.create({
+        model: "gpt-3.5-turbo",
+        messages: [
+          {
+            role: "system",
+            content: systemPrompt,
+          },
           {
             role: "user",
-            parts: [
-              {
-                text: `${systemPrompt}\n\nNecesito un mensaje de WhatsApp para: ${prompt}`,
-              },
-            ],
+            content: `Necesito un mensaje de WhatsApp para: ${prompt}`,
           },
         ],
+        max_tokens: 200,
+        temperature: 0.7,
       });
 
-      const responseText = result.response.text();
+      const responseText = response.choices[0].message.content;
 
       return res.json({ message: responseText });
     } catch (error) {
@@ -80,3 +83,4 @@ El usuario te indicará qué necesita comunicar. Genera SOLO el mensaje listo pa
 
   res.status(404).json({ error: "Endpoint not found" });
 };
+
