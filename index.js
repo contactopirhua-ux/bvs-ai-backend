@@ -52,7 +52,7 @@ Instrucciones:
 
 El usuario te indicará qué necesita comunicar. Genera SOLO el mensaje listo para enviar.`;
 
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+      const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
       const result = await model.generateContent({
         contents: [
